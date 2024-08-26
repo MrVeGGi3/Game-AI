@@ -1,2 +1,2 @@
-# Game-AI
-Research, Projects and Experiments about AI implementation on Game Engines
+# UnityAIRL---FlappyBird
+Using of Reinforcement Learning with Unity to train an Agent to play FlappyBird
