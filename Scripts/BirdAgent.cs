@@ -7,8 +7,14 @@ using Unity.MLAgents.Sensors;
 
 public class BirdAgent : Agent
 {
+    //Velocidade e Rotação
     [SerializeField] private float _velocidade = 1.0f;
     [SerializeField] private float _rotationSpeed = 10f;
+    //Random de Spawn de valores possíveis no eixo X
+    [SerializeField] private float _initialPositionX = 10f;
+    //Random para Spawn de valores possíveis no eixo Y
+    [SerializeField] private float _initialPositionY = 2f;
+    [SerializeField] private float _finalPositionY = 10f;
     private Rigidbody2D _rb;
     private bool is_colliding = false;
 
@@ -23,7 +29,13 @@ public class BirdAgent : Agent
     //Sempre que o Episódio Começa
     public override void OnEpisodeBegin()
     {
-        //transform.position = Vector2();
+        transform.position = Vector2( _initialPositionX, Random.Range(_initialPositionY, _finalPositionY));
+    }
+
+    public override void Heuristic(in ActionBuffers actionsOut)
+    {
+        ActionSegment<float> continuousActions = actionsOut.ContinuousActions;
+        continuousActions[0] = Input.GetKeyDown(Keycode.Space)
     }
 
     void OnCollisionEnter2D(Collider collider)
@@ -44,14 +56,8 @@ public class BirdAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        if()
-        {
-            sensor.AddObservation(_rb.position);
-        }
-        if()
-        {
-            sensor.AddObservation(_rb.position);
-        }
+        sensor.AddObservation(transform.position);
+        sensor.AddObservation(transform.rotation);
     }
 
     public override void OnActionReceived(float[] vectorAction)
@@ -69,10 +75,15 @@ public class BirdAgent : Agent
 
         if(is_colliding)
         {
-            AddReward(-0.5f);
+            SetReward(-0.5f);
             EndEpisode();
         }
 
+    }
+
+    private void FixedUpdate()
+    {
+        transform.rotation = Quaternion.Euler(0,0, _rotationSpeed * _rb.velocity.y);
     }
 
 }
